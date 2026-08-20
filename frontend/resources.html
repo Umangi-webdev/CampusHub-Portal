@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resource Hub | CampusHub</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    /* Modal Layout */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 24px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: var(--shadow);
+      position: relative;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .btn-close {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      line-height: 1;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .btn-close:hover {
+      background: #f1f5f9;
+      color: var(--text-main);
+    }
+    .hide {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <a href="index.html" class="brand">
+        <i class="fa-solid fa-graduation-cap brand-icon"></i>
+        <span>CampusHub</span>
+      </a>
+      <nav class="nav-menu">
+        <a href="index.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="attendance.html" class="nav-item"><i class="fa-solid fa-clipboard-user"></i> Attendance</a>
+        <a href="timetable.html" class="nav-item"><i class="fa-solid fa-calendar-days"></i> Timetable</a>
+        <a href="resources.html" class="nav-item active"><i class="fa-solid fa-book-open"></i> Resource Hub</a>
+        <a href="results.html" class="nav-item"><i class="fa-solid fa-trophy"></i> Results & Ranks</a>
+        <a href="activities.html" class="nav-item"><i class="fa-solid fa-star"></i> Activities & Events</a>
+      </nav>
+      <a href="profile.html" class="user-badge" style="text-decoration: none; color: inherit; cursor: pointer;">
+  <div class="avatar" id="navAvatar">ST</div>
+  <div class="user-info">
+    <span class="user-name" id="navUserName">Student Portal</span>
+    <span class="user-id" id="navUserId">ID: 210120107001</span>
+  </div>
+</a>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="panel-header">
+        <div>
+          <h2 class="section-title" style="margin:0;">Notes & Subject Resources</h2>
+          <p style="color:var(--text-muted); font-size: 0.875rem; margin-top:4px;">
+            Download lecture notes, question banks, and lab manuals.
+          </p>
+        </div>
+        <button class="btn-primary" onclick="toggleModal(true)">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Upload Document
+        </button>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-group" style="margin-bottom: 20px;">
+        <select id="deptFilter" onchange="fetchResources()">
+          <option value="">All Departments</option>
+          <option value="Computer Engineering">Computer Engineering</option>
+          <option value="Information Technology">Information Technology</option>
+          <option value="Mechanical Engineering">Mechanical Engineering</option>
+          <option value="Civil Engineering">Civil Engineering</option>
+        </select>
+        <select id="semFilter" onchange="fetchResources()">
+          <option value="">All Semesters</option>
+          <option value="Sem 1">Sem 1</option><option value="Sem 2">Sem 2</option>
+          <option value="Sem 3">Sem 3</option><option value="Sem 4">Sem 4</option>
+          <option value="Sem 5">Sem 5</option><option value="Sem 6">Sem 6</option>
+          <option value="Sem 7">Sem 7</option><option value="Sem 8">Sem 8</option>
+        </select>
+      </div>
+
+      <!-- Resource Grid -->
+      <div class="resource-grid" id="resourceContainer">
+        <p style="color: var(--text-muted);">Loading repository resources...</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- Upload Modal -->
+  <div id="uploadModal" class="modal-overlay hide" onclick="handleOverlayClick(event)">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Upload Resource</h3>
+        <button type="button" class="btn-close" onclick="toggleModal(false)">&times;</button>
+      </div>
+      <form id="uploadForm" onsubmit="handleResourceUpload(event)">
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Subject / Document Title</label>
+          <input type="text" id="resTitle" placeholder="e.g. Computer Networks Unit 1 Notes" required />
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Uploader Name & Role</label>
+          <input type="text" id="resUploader" placeholder="e.g. Prof. R. Patel (Faculty)" required />
+        </div>
+        <div class="form-row" style="margin: 0 0 12px 0;">
+          <div class="form-group">
+            <label>Department</label>
+            <select id="resDept" required>
+              <option value="Computer Engineering">Computer Engineering</option>
+              <option value="Information Technology">Information Technology</option>
+              <option value="Mechanical Engineering">Mechanical Engineering</option>
+              <option value="Civil Engineering">Civil Engineering</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Semester</label>
+            <select id="resSem" required>
+              <option value="Sem 1">Sem 1</option><option value="Sem 2">Sem 2</option>
+              <option value="Sem 3">Sem 3</option><option value="Sem 4">Sem 4</option>
+              <option value="Sem 5">Sem 5</option><option value="Sem 6" selected>Sem 6</option>
+              <option value="Sem 7">Sem 7</option><option value="Sem 8">Sem 8</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label>Select Document (PDF, ZIP, DOCX)</label>
+          <input type="file" id="resFile" required accept=".pdf,.doc,.docx,.zip,.ppt,.pptx" />
+        </div>
+        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+          <i class="fa-solid fa-arrow-up-from-bracket"></i> Upload to Repository
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:5000';
+
+    // Open/Close Modal
+    function toggleModal(show) {
+      const modal = document.getElementById('uploadModal');
+      if (show) {
+        modal.classList.remove('hide');
+      } else {
+        modal.classList.add('hide');
+      }
+    }
+
+    // Close when clicking the dark backdrop outside modal card
+    function handleOverlayClick(event) {
+      if (event.target.id === 'uploadModal') {
+        toggleModal(false);
+      }
+    }
+
+    // Fetch and render resources from MongoDB
+    async function fetchResources() {
+      const dept = document.getElementById('deptFilter').value;
+      const sem = document.getElementById('semFilter').value;
+      const container = document.getElementById('resourceContainer');
+
+      let url = `${API_BASE}/api/resources?`;
+      if (dept) url += `department=${encodeURIComponent(dept)}&`;
+      if (sem) url += `semester=${encodeURIComponent(sem)}`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.length) {
+          container.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1;">No resources found for the selected filter.</p>`;
+          return;
+        }
+
+        container.innerHTML = data.map(item => `
+          <div class="resource-card card">
+            <div class="res-icon bg-blue"><i class="fa-solid fa-file-pdf"></i></div>
+            <div class="res-body">
+              <h4>${item.title}</h4>
+              <p>Uploaded by: ${item.uploadedBy}</p>
+              <span class="tag">${item.department} | ${item.semester}</span>
+            </div>
+            <a href="${API_BASE}${item.filePath}" target="_blank" download="${item.fileName || 'download'}" class="btn-icon" style="display:flex; align-items:center; justify-content:center; text-decoration:none; color:inherit;">
+              <i class="fa-solid fa-download"></i>
+            </a>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error('Error fetching resources:', err);
+        container.innerHTML = `<p style="color:red; grid-column: 1/-1;">Failed to connect to backend server. Ensure Node.js is running.</p>`;
+      }
+    }
+
+    // Upload Resource via FormData
+    async function handleResourceUpload(e) {
+      e.preventDefault();
+
+      const fileInput = document.getElementById('resFile');
+      if (!fileInput.files.length) {
+        alert('Please choose a file to upload.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('title', document.getElementById('resTitle').value.trim());
+      formData.append('uploadedBy', document.getElementById('resUploader').value.trim());
+      formData.append('department', document.getElementById('resDept').value);
+      formData.append('semester', document.getElementById('resSem').value);
+      formData.append('document', fileInput.files[0]);
+
+      try {
+        const response = await fetch(`${API_BASE}/api/resources/upload`, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (response.ok) {
+          toggleModal(false);
+          document.getElementById('uploadForm').reset();
+          fetchResources(); // Refresh grid with the newly uploaded document
+        } else {
+          const errData = await response.json();
+          alert(errData.message || 'Upload failed');
+        }
+      } catch (error) {
+        console.error('Upload Error:', error);
+        alert('Server unreachable. Ensure your Node.js backend is running on port 5000.');
+      }
+    }
+
+    // Load initial documents on startup
+    fetchResources();
+    (function syncSidebarBadge() {
+  const stored = localStorage.getItem('campusUserProfile');
+  if (stored) {
+    const user = JSON.parse(stored);
+    const navName = document.getElementById('navUserName') || document.querySelector('.user-name');
+    const navId = document.getElementById('navUserId') || document.querySelector('.user-id');
+    const navAvatar = document.getElementById('navAvatar') || document.querySelector('.avatar');
+
+    if (navName) navName.innerText = user.name;
+    if (navId) navId.innerText = `ID: ${user.id}`;
+    if (navAvatar) {
+      if (user.photo) {
+        navAvatar.innerHTML = `<img src="${user.photo}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" alt="Avatar" />`;
+      } else {
+        navAvatar.innerText = user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+      }
+    }
+  }
+})();
+  </script>
+</body>
+</html>

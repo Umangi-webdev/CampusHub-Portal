@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Activities & Events | CampusHub</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    /* Modal Layout */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 24px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: var(--shadow);
+      position: relative;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .btn-close {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      line-height: 1;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .btn-close:hover {
+      background: #f1f5f9;
+      color: var(--text-main);
+    }
+    .hide {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <a href="index.html" class="brand">
+        <i class="fa-solid fa-graduation-cap brand-icon"></i>
+        <span>CampusHub</span>
+      </a>
+      <nav class="nav-menu">
+        <a href="index.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="attendance.html" class="nav-item"><i class="fa-solid fa-clipboard-user"></i> Attendance</a>
+        <a href="timetable.html" class="nav-item"><i class="fa-solid fa-calendar-days"></i> Timetable</a>
+        <a href="resources.html" class="nav-item"><i class="fa-solid fa-book-open"></i> Resource Hub</a>
+        <a href="results.html" class="nav-item"><i class="fa-solid fa-trophy"></i> Results & Ranks</a>
+        <a href="activities.html" class="nav-item active"><i class="fa-solid fa-star"></i> Activities & Events</a>
+      </nav>
+
+      <!-- Clickable Student Profile Badge -->
+      <a href="profile.html" class="user-badge" style="text-decoration: none; color: inherit; cursor: pointer;">
+        <div class="avatar" id="navAvatar">ST</div>
+        <div class="user-info">
+          <span class="user-name" id="navUserName">Student Portal</span>
+          <span class="user-id" id="navUserId">ID: 210120107001</span>
+        </div>
+      </a>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="panel-header">
+        <div>
+          <h2 class="section-title" style="margin:0;">Extra-Curricular Activities & Achievements</h2>
+          <p style="color:var(--text-muted); font-size: 0.875rem; margin-top:4px;">
+            Campus events, hackathons, sports meets, and student spotlights.
+          </p>
+        </div>
+        <button class="btn-primary" onclick="toggleModal(true)">
+          <i class="fa-solid fa-plus"></i> Post Event / Win
+        </button>
+      </div>
+
+      <!-- Activities Grid Container -->
+      <div class="activities-grid" id="activitiesContainer">
+        <p style="color: var(--text-muted);">Loading campus events...</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- Post Activity Modal -->
+  <div id="activityModal" class="modal-overlay hide" onclick="handleOverlayClick(event)">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Post Event or Achievement</h3>
+        <button type="button" class="btn-close" onclick="toggleModal(false)">&times;</button>
+      </div>
+      <form id="activityForm" onsubmit="handleAddActivity(event)">
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Event / Achievement Title</label>
+          <input type="text" id="actTitle" placeholder="e.g. Smart Gujarat Hackathon 1st Prize" required />
+        </div>
+        <div class="form-row" style="margin: 0 0 12px 0;">
+          <div class="form-group">
+            <label>Category</label>
+            <select id="actTag">
+              <option value="Tech Achievement">Tech Achievement</option>
+              <option value="Sports Meet">Sports Meet</option>
+              <option value="Cultural Fest">Cultural Fest</option>
+              <option value="Technical Seminar">Technical Seminar</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Event Date</label>
+            <input type="date" id="actDate" required />
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label>Short Description</label>
+          <textarea id="actDesc" rows="3" style="width:100%; border:1px solid var(--border); border-radius:8px; padding:10px; outline:none; font-family:inherit;" placeholder="Brief details about the activity..." required></textarea>
+        </div>
+        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+          <i class="fa-solid fa-bullhorn"></i> Publish Post
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:5000/api/activities';
+
+    // Toggle Modal
+    function toggleModal(show) {
+      const modal = document.getElementById('activityModal');
+      if (show) {
+        modal.classList.remove('hide');
+      } else {
+        modal.classList.add('hide');
+      }
+    }
+
+    // Close when clicking background outside modal box
+    function handleOverlayClick(event) {
+      if (event.target.id === 'activityModal') {
+        toggleModal(false);
+      }
+    }
+
+    // Fetch and display activities from MongoDB
+    async function fetchActivities() {
+      const container = document.getElementById('activitiesContainer');
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+
+        if (!data.length) {
+          container.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1;">No events or achievements logged yet.</p>`;
+          return;
+        }
+
+        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
+        container.innerHTML = data.map(item => {
+          const d = new Date(item.eventDate);
+          const day = d.getDate().toString().padStart(2, '0');
+          const month = months[d.getMonth()];
+
+          return `
+            <div class="activity-card card">
+              <div class="activity-date">
+                <span class="day">${day}</span>
+                <span class="month">${month}</span>
+              </div>
+              <div class="activity-content">
+                <h4>${item.title}</h4>
+                <p style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">${item.description}</p>
+                <span class="tag">${item.tag}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error('Error fetching activities:', err);
+        container.innerHTML = `<p style="color:red; grid-column: 1/-1;">Could not load activities. Ensure your backend is running on port 5000.</p>`;
+      }
+    }
+
+    // Submit new activity/achievement to backend
+    async function handleAddActivity(e) {
+      e.preventDefault();
+      const payload = {
+        title: document.getElementById('actTitle').value.trim(),
+        tag: document.getElementById('actTag').value,
+        eventDate: document.getElementById('actDate').value,
+        description: document.getElementById('actDesc').value.trim()
+      };
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          toggleModal(false);
+          document.getElementById('activityForm').reset();
+          fetchActivities(); // Refresh list dynamically
+        } else {
+          const errData = await res.json();
+          alert(errData.error || 'Failed to save activity');
+        }
+      } catch (err) {
+        console.error('Save Error:', err);
+        alert('Server unreachable. Ensure Node.js is running.');
+      }
+    }
+
+    // Auto-sync sidebar profile details
+    (function syncSidebar() {
+      const stored = localStorage.getItem('campusUserProfile');
+      if (stored) {
+        const user = JSON.parse(stored);
+        const navName = document.getElementById('navUserName');
+        const navId = document.getElementById('navUserId');
+        const navAvatar = document.getElementById('navAvatar');
+
+        if (navName) navName.innerText = user.name;
+        if (navId) navId.innerText = `ID: ${user.id}`;
+        if (navAvatar) {
+          navAvatar.innerText = user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        }
+      }
+    })();
+
+    // Initial load
+    fetchActivities();
+    (function syncSidebarBadge() {
+  const stored = localStorage.getItem('campusUserProfile');
+  if (stored) {
+    const user = JSON.parse(stored);
+    const navName = document.getElementById('navUserName') || document.querySelector('.user-name');
+    const navId = document.getElementById('navUserId') || document.querySelector('.user-id');
+    const navAvatar = document.getElementById('navAvatar') || document.querySelector('.avatar');
+
+    if (navName) navName.innerText = user.name;
+    if (navId) navId.innerText = `ID: ${user.id}`;
+    if (navAvatar) {
+      if (user.photo) {
+        navAvatar.innerHTML = `<img src="${user.photo}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" alt="Avatar" />`;
+      } else {
+        navAvatar.innerText = user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+      }
+    }
+  }
+})();
+  </script>
+</body>
+</html>

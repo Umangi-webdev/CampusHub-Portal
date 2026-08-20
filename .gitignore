@@ -1,0 +1,15 @@
+# Node dependencies
+node_modules/
+backend/node_modules/
+
+# Environment files
+.env
+backend/.env
+
+# Uploaded files and media
+backend/uploads/
+uploads/
+
+# Operating system / IDE files
+.DS_Store
+.vscode/

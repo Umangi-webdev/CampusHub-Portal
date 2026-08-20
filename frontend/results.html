@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Results & Toppers | CampusHub</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.6); display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: var(--surface); border-radius: var(--radius); padding: 24px; width: 100%; max-width: 480px;
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
+    }
+    .btn-close { background: transparent; border: none; font-size: 1.2rem; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <a href="index.html" class="brand">
+        <i class="fa-solid fa-graduation-cap brand-icon"></i>
+        <span>CampusHub</span>
+      </a>
+      <nav class="nav-menu">
+        <a href="index.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="attendance.html" class="nav-item"><i class="fa-solid fa-clipboard-user"></i> Attendance</a>
+        <a href="timetable.html" class="nav-item"><i class="fa-solid fa-calendar-days"></i> Timetable</a>
+        <a href="resources.html" class="nav-item"><i class="fa-solid fa-book-open"></i> Resource Hub</a>
+        <a href="results.html" class="nav-item active"><i class="fa-solid fa-trophy"></i> Results & Ranks</a>
+        <a href="activities.html" class="nav-item"><i class="fa-solid fa-star"></i> Activities & Events</a>
+      </nav>
+      <a href="profile.html" class="user-badge" style="text-decoration: none; color: inherit; cursor: pointer;">
+  <div class="avatar" id="navAvatar">ST</div>
+  <div class="user-info">
+    <span class="user-name" id="navUserName">Student Portal</span>
+    <span class="user-id" id="navUserId">ID: 210120107001</span>
+  </div>
+</a>
+    </aside>
+
+    <main class="main-content">
+      <div class="panel-header">
+        <div>
+          <h2 class="section-title" style="margin:0;">Department Rank Holders</h2>
+          <p style="color:var(--text-muted); font-size: 0.875rem; margin-top:4px;">Official merit lists and academic rank standings.</p>
+        </div>
+        <button class="btn-primary" onclick="toggleModal(true)">
+          <i class="fa-solid fa-plus"></i> Add Rank Entry
+        </button>
+      </div>
+
+      <div class="filter-group" style="margin-bottom: 24px;">
+        <select id="deptFilter" onchange="fetchResults()">
+          <option value="">All Departments</option>
+          <option value="Computer Engineering">Computer Engineering</option>
+          <option value="Information Technology">Information Technology</option>
+          <option value="Mechanical Engineering">Mechanical Engineering</option>
+          <option value="Civil Engineering">Civil Engineering</option>
+        </select>
+        <select id="semFilter" onchange="fetchResults()">
+          <option value="">All Semesters</option>
+          <option value="Sem 1">Sem 1</option><option value="Sem 2">Sem 2</option>
+          <option value="Sem 3">Sem 3</option><option value="Sem 4">Sem 4</option>
+          <option value="Sem 5">Sem 5</option><option value="Sem 6" selected>Sem 6</option>
+          <option value="Sem 7">Sem 7</option><option value="Sem 8">Sem 8</option>
+        </select>
+      </div>
+
+      <div class="topper-grid" id="topperContainer">
+        <p style="color: var(--text-muted);">Loading rank holders...</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Result Modal -->
+  <div id="resultModal" class="modal-overlay hide">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add Topper Entry</h3>
+        <button class="btn-close" onclick="toggleModal(false)">&times;</button>
+      </div>
+      <form id="resultForm" onsubmit="handleAddResult(event)">
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Student Full Name</label>
+          <input type="text" id="resStudentName" placeholder="e.g. Rahul Sharma" required />
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Enrollment Number</label>
+          <input type="text" id="resEnrollNo" placeholder="e.g. 210120107005" required />
+        </div>
+        <div class="form-row" style="margin: 0 0 12px 0;">
+          <div class="form-group">
+            <label>Department</label>
+            <select id="resDept" required>
+              <option>Computer Engineering</option>
+              <option>Information Technology</option>
+              <option>Mechanical Engineering</option>
+              <option>Civil Engineering</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Semester</label>
+            <select id="resSem" required>
+              <option>Sem 1</option><option>Sem 2</option><option>Sem 3</option><option>Sem 4</option>
+              <option>Sem 5</option><option selected>Sem 6</option><option>Sem 7</option><option>Sem 8</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row" style="margin: 0 0 20px 0;">
+          <div class="form-group">
+            <label>CGPA</label>
+            <input type="number" step="0.01" min="0" max="10" id="resCgpa" placeholder="9.50" required />
+          </div>
+          <div class="form-group">
+            <label>Rank</label>
+            <input type="number" min="1" max="10" id="resRank" placeholder="1" required />
+          </div>
+        </div>
+        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">Save Entry</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+  const API_URL = 'http://localhost:5000/api/results';
+
+function toggleModal(show) {
+  const modal = document.getElementById('resultModal');
+  if (show) modal.classList.remove('hide');
+  else modal.classList.add('hide');
+}
+
+async function fetchResults() {
+  const dept = document.getElementById('deptFilter').value;
+  const sem = document.getElementById('semFilter').value;
+  const container = document.getElementById('topperContainer');
+
+  let url = `${API_URL}?`;
+  if (dept) url += `department=${encodeURIComponent(dept)}&`;
+  if (sem) url += `semester=${encodeURIComponent(sem)}`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!data.length) {
+      container.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1;">No results found for ${dept || 'All Departments'} (${sem || 'All Semesters'}).</p>`;
+      return;
+    }
+
+    container.innerHTML = data.map(item => {
+      let rankClass = item.rank === 1 ? 'rank-1' : item.rank === 2 ? 'rank-2' : item.rank === 3 ? 'rank-3' : '';
+      return `
+        <div class="topper-card card ${rankClass}">
+          <div class="rank-badge">
+            ${item.rank === 1 ? '<i class="fa-solid fa-crown"></i> ' : ''}Rank ${item.rank}
+          </div>
+          <h3>${item.studentName}</h3>
+          <p class="topper-dept" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">
+            ${item.department} - ${item.semester}
+          </p>
+          <div class="cgpa-pill">${Number(item.cgpa).toFixed(2)} CGPA</div>
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    console.error('Error loading results:', err);
+    container.innerHTML = `<p style="color:red; grid-column: 1/-1;">Failed to connect to backend server.</p>`;
+  }
+}
+
+async function handleAddResult(e) {
+  e.preventDefault();
+
+  const chosenDept = document.getElementById('resDept').value;
+  const chosenSem = document.getElementById('resSem').value;
+
+  const payload = {
+    studentName: document.getElementById('resStudentName').value.trim(),
+    enrollmentNo: document.getElementById('resEnrollNo').value.trim(),
+    department: chosenDept,
+    semester: chosenSem,
+    cgpa: parseFloat(document.getElementById('resCgpa').value),
+    rank: parseInt(document.getElementById('resRank').value)
+  };
+
+  try {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (response.ok) {
+      toggleModal(false);
+      document.getElementById('resultForm').reset();
+      
+      // Automatically switch dropdown filter to the newly added department & semester
+      document.getElementById('deptFilter').value = chosenDept;
+      document.getElementById('semFilter').value = chosenSem;
+      fetchResults();
+    } else {
+      const err = await response.json();
+      alert(err.error || 'Failed to save result entry');
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Server unreachable');
+  }
+}
+
+fetchResults();
+    
+
+    (function syncSidebarBadge() {
+  const stored = localStorage.getItem('campusUserProfile');
+  if (stored) {
+    const user = JSON.parse(stored);
+    const navName = document.getElementById('navUserName') || document.querySelector('.user-name');
+    const navId = document.getElementById('navUserId') || document.querySelector('.user-id');
+    const navAvatar = document.getElementById('navAvatar') || document.querySelector('.avatar');
+
+    if (navName) navName.innerText = user.name;
+    if (navId) navId.innerText = `ID: ${user.id}`;
+    if (navAvatar) {
+      if (user.photo) {
+        navAvatar.innerHTML = `<img src="${user.photo}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" alt="Avatar" />`;
+      } else {
+        navAvatar.innerText = user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+      }
+    }
+  }
+})();
+  </script>
+</body>
+</html>

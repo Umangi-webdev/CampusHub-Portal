@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Timetable | CampusHub</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <a href="index.html" class="brand">
+        <i class="fa-solid fa-graduation-cap brand-icon"></i>
+        <span>CampusHub</span>
+      </a>
+      <nav class="nav-menu">
+        <a href="index.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="attendance.html" class="nav-item"><i class="fa-solid fa-clipboard-user"></i> Attendance</a>
+        <a href="timetable.html" class="nav-item active"><i class="fa-solid fa-calendar-days"></i> Timetable</a>
+        <a href="resources.html" class="nav-item"><i class="fa-solid fa-book-open"></i> Resource Hub</a>
+        <a href="results.html" class="nav-item"><i class="fa-solid fa-trophy"></i> Results & Ranks</a>
+        <a href="activities.html" class="nav-item"><i class="fa-solid fa-star"></i> Activities & Events</a>
+      </nav>
+      <a href="profile.html" class="user-badge" style="text-decoration: none; color: inherit; cursor: pointer;">
+  <div class="avatar" id="navAvatar">ST</div>
+  <div class="user-info">
+    <span class="user-name" id="navUserName">Student Portal</span>
+    <span class="user-id" id="navUserId">ID: 210120107001</span>
+  </div>
+</a>
+    </aside>
+
+    <main class="main-content">
+      <div class="panel-header">
+        <h2 class="section-title" style="margin:0;">Academic Schedule</h2>
+        <div class="filter-group">
+          <select id="ttDept" onchange="fetchTimetable()">
+            <option value="Computer Engineering">Computer Engineering</option>
+            <option value="Information Technology">Information Technology</option>
+            <option value="Civil Engineering">Civil Engineering</option>
+          </select>
+          <select id="ttSem" onchange="fetchTimetable()">
+            <option value="Sem 6" selected>Semester 6</option>
+            <option value="Sem 4">Semester 4</option>
+            <option value="Sem 2">Semester 2</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-container card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>09:00 - 10:00</th>
+              <th>10:00 - 11:00</th>
+              <th>11:15 - 12:15</th>
+              <th>12:15 - 01:15</th>
+              <th>02:00 - 04:00 (Practical Lab)</th>
+            </tr>
+          </thead>
+          <tbody id="timetableBody">
+            <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Loading schedule...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:5000/api/timetable';
+
+    async function fetchTimetable() {
+      const dept = document.getElementById('ttDept').value;
+      const sem = document.getElementById('ttSem').value;
+      const tbody = document.getElementById('timetableBody');
+
+      try {
+        const res = await fetch(`${API_URL}?department=${encodeURIComponent(dept)}&semester=${encodeURIComponent(sem)}`);
+        const data = await res.json();
+
+        if (!data.length) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">No timetable uploaded for this department & semester yet.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = data.map(item => `
+          <tr>
+            <td><strong>${item.day}</strong></td>
+            <td>${item.slot1}</td>
+            <td>${item.slot2}</td>
+            <td>${item.slot3}</td>
+            <td>${item.slot4}</td>
+            <td><span class="badge badge-lab">${item.labSlot}</span></td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        console.error(err);
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:red;">Failed to connect to backend server.</td></tr>`;
+      }
+    }
+
+    fetchTimetable();
+    (function syncSidebarBadge() {
+  const stored = localStorage.getItem('campusUserProfile');
+  if (stored) {
+    const user = JSON.parse(stored);
+    const navName = document.getElementById('navUserName') || document.querySelector('.user-name');
+    const navId = document.getElementById('navUserId') || document.querySelector('.user-id');
+    const navAvatar = document.getElementById('navAvatar') || document.querySelector('.avatar');
+
+    if (navName) navName.innerText = user.name;
+    if (navId) navId.innerText = `ID: ${user.id}`;
+    if (navAvatar) {
+      if (user.photo) {
+        navAvatar.innerHTML = `<img src="${user.photo}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" alt="Avatar" />`;
+      } else {
+        navAvatar.innerText = user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+      }
+    }
+  }
+})();
+  </script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Profile | CampusHub</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    .profile-card {
+      max-width: 750px;
+      margin: 0 auto;
+    }
+    .profile-header-box {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    /* Avatar with Photo Upload Container */
+    .avatar-wrapper {
+      position: relative;
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .avatar-large {
+      width: 100%;
+      height: 100%;
+      background: var(--accent-blue);
+      color: var(--primary);
+      font-size: 1.85rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid var(--border);
+    }
+    .avatar-large img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .avatar-edit-overlay {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: var(--primary);
+      color: #fff;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      border: 2px solid var(--surface);
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .avatar-wrapper:hover .avatar-edit-overlay {
+      transform: scale(1.1);
+      background: var(--primary-hover);
+    }
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <a href="index.html" class="brand">
+        <i class="fa-solid fa-graduation-cap brand-icon"></i>
+        <span>CampusHub</span>
+      </a>
+      <nav class="nav-menu">
+        <a href="index.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="attendance.html" class="nav-item"><i class="fa-solid fa-clipboard-user"></i> Attendance</a>
+        <a href="timetable.html" class="nav-item"><i class="fa-solid fa-calendar-days"></i> Timetable</a>
+        <a href="resources.html" class="nav-item"><i class="fa-solid fa-book-open"></i> Resource Hub</a>
+        <a href="results.html" class="nav-item"><i class="fa-solid fa-trophy"></i> Results & Ranks</a>
+        <a href="activities.html" class="nav-item"><i class="fa-solid fa-star"></i> Activities & Events</a>
+      </nav>
+
+      <!-- Sidebar Badge (Auto-syncs photo/initials) -->
+      <a href="profile.html" class="user-badge" style="text-decoration: none; border-color: var(--primary); color: inherit;">
+        <div class="avatar" id="sidebarAvatar">UP</div>
+        <div class="user-info">
+          <span class="user-name" id="sidebarName">Umangi Patel</span>
+          <span class="user-id" id="sidebarId">ID: 230610107037</span>
+        </div>
+      </a>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="panel-header">
+        <div>
+          <h2 class="section-title" style="margin:0;">My Student Profile</h2>
+          <p style="color:var(--text-muted); font-size: 0.875rem; margin-top:4px;">
+            Update your profile picture, personal info, and academic standing.
+          </p>
+        </div>
+      </div>
+
+      <div class="card profile-card">
+        <div class="profile-header-box">
+          <!-- Clickable Avatar to Upload Photo -->
+          <div class="avatar-wrapper" onclick="document.getElementById('photoInput').click()" title="Click to upload profile picture">
+            <div class="avatar-large" id="profileAvatarLarge">UP</div>
+            <div class="avatar-edit-overlay">
+              <i class="fa-solid fa-camera"></i>
+            </div>
+          </div>
+          <!-- Hidden File Input -->
+          <input type="file" id="photoInput" accept="image/*" style="display: none;" onchange="handlePhotoUpload(event)" />
+
+          <div>
+            <h3 id="displayHeaderName" style="font-size: 1.3rem;">Umangi Patel</h3>
+            <p style="color:var(--text-muted); font-size: 0.9rem;" id="displayHeaderSub">Computer Engineering &bull; Sem 6</p>
+            <button type="button" class="btn-primary" style="padding: 4px 10px; font-size: 0.75rem; margin-top: 8px;" onclick="document.getElementById('photoInput').click()">
+              <i class="fa-solid fa-image"></i> Change Photo
+            </button>
+          </div>
+        </div>
+
+        <!-- Profile Edit Form -->
+        <form id="profileForm" onsubmit="saveProfile(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" id="profName" value="Umangi Patel" required />
+            </div>
+            <div class="form-group">
+              <label>Enrollment ID / College ID</label>
+              <input type="text" id="profId" value="230610107037" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="profEmail" value="umangi.patel@gec.edu.in" required />
+            </div>
+            <div class="form-group">
+              <label>Contact Number</label>
+              <input type="tel" id="profPhone" value="+91 9876543210" placeholder="+91 9876543210" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Department</label>
+              <select id="profDept">
+                <option value="Computer Engineering" selected>Computer Engineering</option>
+                <option value="Information Technology">Information Technology</option>
+                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                <option value="Civil Engineering">Civil Engineering</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Semester</label>
+              <select id="profSem">
+                <option>Sem 1</option><option>Sem 2</option><option>Sem 3</option><option>Sem 4</option>
+                <option>Sem 5</option><option selected>Sem 6</option><option>Sem 7</option><option>Sem 8</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top: 24px; display: flex; gap: 12px;">
+            <button type="submit" class="btn-primary">
+              <i class="fa-solid fa-floppy-disk"></i> Save Profile Changes
+            </button>
+            <a href="index.html" class="btn-primary" style="background:#f1f5f9; color:var(--text-main); border:1px solid var(--border); text-decoration:none;">
+              Cancel
+            </a>
+          </div>
+        </form>
+
+        <div id="profileSavedAlert" class="alert-box hide">
+          <i class="fa-solid fa-circle-check"></i> Profile details updated successfully!
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Initial profile structure
+    let currentProfile = {
+      name: "Umangi Patel",
+      id: "230610107037",
+      email: "umangi.patel@gec.edu.in",
+      phone: "+91 9876543210",
+      dept: "Computer Engineering",
+      sem: "Sem 6",
+      photo: "" // Base64 Data URL
+    };
+
+    // Load Profile from LocalStorage
+    function loadProfile() {
+      const stored = localStorage.getItem('campusUserProfile');
+      if (stored) {
+        currentProfile = { ...currentProfile, ...JSON.parse(stored) };
+      }
+
+      // Populate input fields
+      document.getElementById('profName').value = currentProfile.name;
+      document.getElementById('profId').value = currentProfile.id;
+      document.getElementById('profEmail').value = currentProfile.email;
+      document.getElementById('profPhone').value = currentProfile.phone;
+      document.getElementById('profDept').value = currentProfile.dept;
+      document.getElementById('profSem').value = currentProfile.sem;
+
+      // Update text displays
+      document.getElementById('displayHeaderName').innerText = currentProfile.name;
+      document.getElementById('displayHeaderSub').innerText = `${currentProfile.dept} • ${currentProfile.sem}`;
+      document.getElementById('sidebarName').innerText = currentProfile.name;
+      document.getElementById('sidebarId').innerText = `ID: ${currentProfile.id}`;
+
+      // Render Avatar or Photo
+      const initials = currentProfile.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) || "ST";
+      const largeAvatar = document.getElementById('profileAvatarLarge');
+      const sideAvatar = document.getElementById('sidebarAvatar');
+
+      if (currentProfile.photo) {
+        largeAvatar.innerHTML = `<img src="${currentProfile.photo}" alt="Profile" />`;
+        sideAvatar.innerHTML = `<img src="${currentProfile.photo}" alt="Profile" />`;
+      } else {
+        largeAvatar.innerText = initials;
+        sideAvatar.innerText = initials;
+      }
+    }
+
+    // Handle Uploading a Local Picture
+    function handlePhotoUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      // File size validation (< 3MB)
+      if (file.size > 3 * 1024 * 1024) {
+        alert("Image size should be less than 3MB.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        currentProfile.photo = e.target.result;
+        // Auto-save picture
+        localStorage.setItem('campusUserProfile', JSON.stringify(currentProfile));
+        loadProfile();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Save Form Information
+    function saveProfile(e) {
+      e.preventDefault();
+
+      currentProfile.name = document.getElementById('profName').value.trim();
+      currentProfile.id = document.getElementById('profId').value.trim();
+      currentProfile.email = document.getElementById('profEmail').value.trim();
+      currentProfile.phone = document.getElementById('profPhone').value.trim();
+      currentProfile.dept = document.getElementById('profDept').value;
+      currentProfile.sem = document.getElementById('profSem').value;
+
+      localStorage.setItem('campusUserProfile', JSON.stringify(currentProfile));
+      loadProfile();
+
+      const alertBox = document.getElementById('profileSavedAlert');
+      alertBox.classList.remove('hide');
+      setTimeout(() => alertBox.classList.add('hide'), 4000);
+    }
+
+    // Initial Execution
+    loadProfile();
+  </script>
+</body>
+</html>

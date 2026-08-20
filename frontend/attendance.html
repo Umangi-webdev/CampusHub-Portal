@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Attendance & History | CampusHub</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <a href="index.html" class="brand">
+        <i class="fa-solid fa-graduation-cap brand-icon"></i>
+        <span>CampusHub</span>
+      </a>
+      <nav class="nav-menu">
+        <a href="index.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="attendance.html" class="nav-item active"><i class="fa-solid fa-clipboard-user"></i> Attendance</a>
+        <a href="timetable.html" class="nav-item"><i class="fa-solid fa-calendar-days"></i> Timetable</a>
+        <a href="resources.html" class="nav-item"><i class="fa-solid fa-book-open"></i> Resource Hub</a>
+        <a href="results.html" class="nav-item"><i class="fa-solid fa-trophy"></i> Results & Ranks</a>
+        <a href="activities.html" class="nav-item"><i class="fa-solid fa-star"></i> Activities & Events</a>
+      </nav>
+      <a href="profile.html" class="user-badge" style="text-decoration: none; color: inherit;">
+        <div class="avatar" id="navAvatar">ST</div>
+        <div class="user-info">
+          <span class="user-name" id="navUserName">Student Portal</span>
+          <span class="user-id" id="navUserId">ID: 230610107037</span>
+        </div>
+      </a>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="top-header">
+        <h2 class="section-title" style="margin:0;">Attendance Portal</h2>
+        <span class="date-chip" id="todayDate"></span>
+      </header>
+
+      <!-- Submit Attendance Form -->
+      <div class="card form-card">
+        <h3>Mark Attendance</h3>
+        <p class="subtitle" style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">
+          Log daily student check-ins by selecting student ID, department, semester, and date.
+        </p>
+        <form id="attendanceForm" onsubmit="submitAttendance(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Student College ID</label>
+              <input type="text" id="attId" placeholder="e.g. 230610107037" required />
+            </div>
+            <div class="form-group">
+              <label>Department</label>
+              <select id="attDept">
+                <option value="Computer Engineering">Computer Engineering</option>
+                <option value="Information Technology">Information Technology</option>
+                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                <option value="Civil Engineering">Civil Engineering</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Semester</label>
+              <select id="attSem">
+                <option>Sem 1</option><option>Sem 2</option><option>Sem 3</option><option>Sem 4</option>
+                <option>Sem 5</option><option selected>Sem 6</option><option>Sem 7</option><option>Sem 8</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Attendance Date</label>
+              <input type="date" id="attDate" required />
+            </div>
+          </div>
+          <button type="submit" class="btn-primary"><i class="fa-solid fa-check"></i> Submit Attendance</button>
+        </form>
+
+        <div id="attendanceSuccess" class="alert-box hide">
+          <i class="fa-solid fa-circle-check"></i> Attendance logged successfully!
+        </div>
+      </div>
+
+      <!-- Attendance History & Search Filters -->
+      <div class="card" style="margin-top: 24px;">
+        <div class="panel-header" style="flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+          <div>
+            <h3 style="font-size: 1.15rem;">Attendance History & Records</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Filter by date or department to view previous logs.</p>
+          </div>
+          <div class="filter-group" style="flex-wrap: wrap;">
+            <input type="date" id="filterDate" onchange="fetchAttendanceHistory()" style="padding: 8px 12px; border:1px solid var(--border); border-radius:8px;" />
+            <select id="filterDept" onchange="fetchAttendanceHistory()">
+              <option value="">All Departments</option>
+              <option value="Computer Engineering">Computer Engineering</option>
+              <option value="Information Technology">Information Technology</option>
+              <option value="Mechanical Engineering">Mechanical Engineering</option>
+              <option value="Civil Engineering">Civil Engineering</option>
+            </select>
+            <button class="btn-primary" style="padding: 8px 14px;" onclick="clearFilters()">Clear Filters</button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Department</th>
+                <th>Semester</th>
+                <th>Date</th>
+                <th>Time Logged</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="attendanceLogsBody">
+              <tr>
+                <td colspan="6" style="text-align: center; color: var(--text-muted);">Loading logs...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:5000/api/attendance';
+
+    // Set today's date as default on inputs
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('attDate').value = today;
+    document.getElementById('todayDate').innerText = new Date().toLocaleDateString('en-US', {
+      weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'
+    });
+
+    // Submit Attendance
+    async function submitAttendance(e) {
+      e.preventDefault();
+
+      const payload = {
+        studentId: document.getElementById('attId').value.trim(),
+        department: document.getElementById('attDept').value,
+        semester: document.getElementById('attSem').value,
+        date: document.getElementById('attDate').value
+      };
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          const alertBox = document.getElementById('attendanceSuccess');
+          alertBox.classList.remove('hide');
+          
+          document.getElementById('attId').value = '';
+          fetchAttendanceHistory();
+
+          setTimeout(() => alertBox.classList.add('hide'), 4000);
+        } else {
+          const errData = await response.json();
+          alert(errData.error || 'Failed to submit attendance');
+        }
+      } catch (error) {
+        console.error('Error submitting:', error);
+        alert('Server unreachable');
+      }
+    }
+
+    // Fetch and Render Attendance Records
+    async function fetchAttendanceHistory() {
+      const selectedDate = document.getElementById('filterDate').value;
+      const selectedDept = document.getElementById('filterDept').value;
+      const tbody = document.getElementById('attendanceLogsBody');
+
+      let url = `${API_URL}?`;
+      if (selectedDate) url += `date=${encodeURIComponent(selectedDate)}&`;
+      if (selectedDept) url += `department=${encodeURIComponent(selectedDept)}`;
+
+      try {
+        const res = await fetch(url);
+        const records = await res.json();
+
+        if (!records.length) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">No attendance records found for this filter.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = records.map(item => {
+          const d = new Date(item.date);
+          const dateStr = d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+          const timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+          return `
+            <tr>
+              <td><strong>${item.studentId}</strong></td>
+              <td>${item.department}</td>
+              <td>${item.semester}</td>
+              <td>${dateStr}</td>
+              <td>${timeStr}</td>
+              <td><span class="tag" style="background: var(--accent-green); color: #166534; font-weight:600;">Present</span></td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error(err);
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:red;">Failed to connect to backend server.</td></tr>`;
+      }
+    }
+
+    function clearFilters() {
+      document.getElementById('filterDate').value = '';
+      document.getElementById('filterDept').value = '';
+      fetchAttendanceHistory();
+    }
+
+    // Profile auto-sync
+    (function syncSidebar() {
+      const stored = localStorage.getItem('campusUserProfile');
+      if (stored) {
+        const user = JSON.parse(stored);
+        const navName = document.getElementById('navUserName');
+        const navId = document.getElementById('navUserId');
+        const navAvatar = document.getElementById('navAvatar');
+
+        if (navName) navName.innerText = user.name;
+        if (navId) navId.innerText = `ID: ${user.id}`;
+        if (navAvatar) {
+          if (user.photo) {
+            navAvatar.innerHTML = `<img src="${user.photo}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" alt="Avatar" />`;
+          } else {
+            navAvatar.innerText = user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+          }
+        }
+      }
+    })();
+
+    // Initial load
+    fetchAttendanceHistory();
+  </script>
+</body>
+</html>

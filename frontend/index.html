@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | CampusHub</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <a href="index.html" class="brand">
+        <i class="fa-solid fa-graduation-cap brand-icon"></i>
+        <span>CampusHub</span>
+      </a>
+      <nav class="nav-menu">
+        <a href="index.html" class="nav-item active"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="attendance.html" class="nav-item"><i class="fa-solid fa-clipboard-user"></i> Attendance</a>
+        <a href="timetable.html" class="nav-item"><i class="fa-solid fa-calendar-days"></i> Timetable</a>
+        <a href="resources.html" class="nav-item"><i class="fa-solid fa-book-open"></i> Resource Hub</a>
+        <a href="results.html" class="nav-item"><i class="fa-solid fa-trophy"></i> Results & Ranks</a>
+        <a href="activities.html" class="nav-item"><i class="fa-solid fa-star"></i> Activities & Events</a>
+      </nav>
+      <a href="profile.html" class="user-badge" style="text-decoration: none; color: inherit; cursor: pointer;">
+  <div class="avatar" id="navAvatar">ST</div>
+  <div class="user-info">
+    <span class="user-name" id="navUserName">Student Portal</span>
+    <span class="user-id" id="navUserId">ID: 210120107001</span>
+  </div>
+</a>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="search-bar">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search notices, subjects, events..." />
+        </div>
+        <div class="header-actions">
+          <button class="notification-btn"><i class="fa-regular fa-bell"></i></button>
+          <span class="date-chip" id="currentDate"></span>
+        </div>
+      </header>
+
+      <h2 class="section-title">Academic Overview</h2>
+
+      <!-- Metric Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon bg-blue"><i class="fa-solid fa-user-check"></i></div>
+          <div class="stat-data">
+            <span class="stat-value" id="todayAttendanceCount">--</span>
+            <span class="stat-label">Today's Check-ins</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon bg-green"><i class="fa-solid fa-medal"></i></div>
+          <div class="stat-data">
+            <span class="stat-value" id="topRanker">Rank #1</span>
+            <span class="stat-label">Top Department Rank</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon bg-purple"><i class="fa-solid fa-file-arrow-up"></i></div>
+          <div class="stat-data">
+            <span class="stat-value" id="totalResourcesCount">0</span>
+            <span class="stat-label">Shared Resources</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon bg-amber"><i class="fa-solid fa-calendar-check"></i></div>
+          <div class="stat-data">
+            <span class="stat-value" id="totalEventsCount">0</span>
+            <span class="stat-label">Upcoming Events</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Notice Banner -->
+      <div class="notice-banner" style="margin-bottom: 24px;">
+        <i class="fa-solid fa-bullhorn" style="font-size: 1.25rem;"></i>
+        <div id="latestNotice">
+          <strong>Latest Announcement:</strong> Loading latest updates from campus...
+        </div>
+      </div>
+
+      <!-- Quick Action Cards -->
+      <h3 style="font-size: 1.15rem; margin-bottom: 16px; font-weight: 600;">Quick Navigation</h3>
+      <div class="resource-grid">
+        <div class="card" style="display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="stat-icon bg-blue" style="width:40px; height:40px;"><i class="fa-solid fa-clipboard-user"></i></div>
+            <h4 style="margin:0;">Daily Attendance</h4>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-muted);">Quickly log your daily subject attendance using your enrollment ID.</p>
+          <a href="attendance.html" class="btn-primary" style="margin-top:auto; font-size:0.85rem; width:fit-content;">Go to Attendance</a>
+        </div>
+
+        <div class="card" style="display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="stat-icon bg-purple" style="width:40px; height:40px;"><i class="fa-solid fa-book-open"></i></div>
+            <h4 style="margin:0;">Resource Repository</h4>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-muted);">Download lecture slides, subject notes, and question banks.</p>
+          <a href="resources.html" class="btn-primary" style="margin-top:auto; font-size:0.85rem; width:fit-content;">View Resources</a>
+        </div>
+
+        <div class="card" style="display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="stat-icon bg-green" style="width:40px; height:40px;"><i class="fa-solid fa-trophy"></i></div>
+            <h4 style="margin:0;">Merit List & Toppers</h4>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-muted);">Check current semester results, top rankings, and highest CGPAs.</p>
+          <a href="results.html" class="btn-primary" style="margin-top:auto; font-size:0.85rem; width:fit-content;">View Leaderboard</a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Backend Integration Script -->
+  <script>
+    const API_BASE = 'http://localhost:5000/api';
+
+    // Set today's date in header
+    document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-US', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+
+    // Fetch and aggregate dashboard stats from backend
+    async function loadDashboardStats() {
+      try {
+        // 1. Fetch Today's Attendance Count
+        const attRes = await fetch(`${API_BASE}/attendance`);
+        if (attRes.ok) {
+          const attData = await attRes.json();
+          document.getElementById('todayAttendanceCount').innerText = attData.length;
+        }
+
+        // 2. Fetch Resources Count
+        const resDocs = await fetch(`${API_BASE}/resources`);
+        if (resDocs.ok) {
+          const docsData = await resDocs.json();
+          document.getElementById('totalResourcesCount').innerText = docsData.length;
+        }
+
+        // 3. Fetch Activities & Latest Notice
+        const resEvents = await fetch(`${API_BASE}/activities`);
+        if (resEvents.ok) {
+          const eventsData = await resEvents.json();
+          document.getElementById('totalEventsCount').innerText = eventsData.length;
+
+          if (eventsData.length > 0) {
+            const latest = eventsData[0];
+            document.getElementById('latestNotice').innerHTML = `
+              <strong>${latest.tag}:</strong> ${latest.title} &mdash; ${latest.description}
+            `;
+          } else {
+            document.getElementById('latestNotice').innerHTML = `
+              <strong>Notice:</strong> Welcome to CampusHub. All department modules are operational.
+            `;
+          }
+        }
+
+        // 4. Fetch Top Ranker Name
+        const resResults = await fetch(`${API_BASE}/results`);
+        if (resResults.ok) {
+          const rankData = await resResults.json();
+          if (rankData.length > 0) {
+            document.getElementById('topRanker').innerText = `${rankData[0].studentName.split(' ')[0]} (${rankData[0].cgpa})`;
+          }
+        }
+      } catch (err) {
+        console.warn('Dashboard stats fallback mode (Backend offline or connecting):', err);
+        document.getElementById('latestNotice').innerHTML = `
+          <strong>Notice:</strong> Ensure your backend server is running on port 5000 to view live updates.
+        `;
+      }
+    }
+
+    loadDashboardStats();
+    (function syncSidebarBadge() {
+  const stored = localStorage.getItem('campusUserProfile');
+  if (stored) {
+    const user = JSON.parse(stored);
+    const navName = document.getElementById('navUserName') || document.querySelector('.user-name');
+    const navId = document.getElementById('navUserId') || document.querySelector('.user-id');
+    const navAvatar = document.getElementById('navAvatar') || document.querySelector('.avatar');
+
+    if (navName) navName.innerText = user.name;
+    if (navId) navId.innerText = `ID: ${user.id}`;
+    if (navAvatar) {
+      if (user.photo) {
+        navAvatar.innerHTML = `<img src="${user.photo}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" alt="Avatar" />`;
+      } else {
+        navAvatar.innerText = user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+      }
+    }
+  }
+})();
+  </script>
+</body>
+</html>
