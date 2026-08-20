@@ -6,13 +6,28 @@ require('dotenv').config();
 const app = express();
 
 // 1. Enable CORS for frontend requests
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://hub-portal.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'http://127.0.0.1:5500'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // 2. Parse JSON
 app.use(express.json());
 
 // 3. Serve uploaded files statically
 app.use('/uploads', express.static('uploads'));
+
+// Health check / Test route
+app.get('/', (req, res) => {
+  res.send('CampusHub Backend API is Running');
+});
 
 // 4. Connect MongoDB
 mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/campusdiary')
