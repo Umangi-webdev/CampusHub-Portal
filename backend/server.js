@@ -8,7 +8,8 @@ const app = express();
 // 1. Enable CORS for frontend requests
 app.use(cors({
   origin: [
-    'https://campus-hub-portal.vercel.app/',
+    'https://hub-portal.vercel.app',
+    'https://campus-hub-portal.vercel.app',
     'http://localhost:5173',
     'http://localhost:3000',
     'http://127.0.0.1:5500'
@@ -30,7 +31,7 @@ app.get('/', (req, res) => {
 });
 
 // 4. Connect MongoDB
-const mongoURI = process.env.MONGO_URI || process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/campushub';
+const mongoURI = process.env.MONGO_URI || process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/campushub';
 
 mongoose.connect(mongoURI)
   .then(() => console.log('MongoDB Connected Successfully'))
