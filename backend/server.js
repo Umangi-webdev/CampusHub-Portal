@@ -8,7 +8,7 @@ const app = express();
 // 1. Enable CORS for frontend requests
 app.use(cors({
   origin: [
-    'https://hub-portal.vercel.app',
+    'https://campus-hub-portal.vercel.app/',
     'http://localhost:5173',
     'http://localhost:3000',
     'http://127.0.0.1:5500'
