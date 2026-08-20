@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
 });
 
 // 4. Connect MongoDB
-mongoose.connect(process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/campusdiary')
+mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/campusdiary')
   .then(() => console.log('MongoDB Connected Successfully'))
   .catch((err) => console.error('DB Connection Error:', err));
 
