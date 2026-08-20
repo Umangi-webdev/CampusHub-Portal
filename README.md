@@ -55,3 +55,15 @@ CampusDiary/
 │   └── timetable.html            # Class timetable views
 ├── .gitignore                    # Version control ignore definitions
 └── README.md
+
+**Patel Umangi**
+🎓 Computer Engineering (SPI: 9.65)
+
+🔗 GitHub: https://github.com/Umangi-webdev
+
+## ⭐ Support
+
+If you like this project:
+
+👉 Give it a ⭐ on GitHub
+👉 Share it with others
