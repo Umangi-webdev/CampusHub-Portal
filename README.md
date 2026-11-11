@@ -34,7 +34,7 @@ CampusDiary/
 │   │   ├── Resource.js           # File repository schema
 │   │   ├── Result.js             # Academic leaderboard schema
 │   │   └── Timetable.js          # Class schedule schema
-│   ├── routes/
+│   ├── routes
 │   │   ├── activityRoutes.js     # Events endpoints
 │   │   ├── attendanceRoutes.js   # Attendance CRUD endpoints
 │   │   ├── resourceRoutes.js     # Multer file upload & retrieval endpoints
